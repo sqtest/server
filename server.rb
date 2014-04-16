@@ -25,7 +25,7 @@ def loadField()
 
   @conn.exec_params( "SELECT * FROM gameobjects where fieldid=$1", [@fieldId] ) do |result|
     result.each do |row|
-     str += '<'+row['type']+' x="'+row['x']+'" y="'+row['y']+'" time="'+row['time']+'" id="'+row['id']+'" />'
+     str += '<'+row['type']+' x="'+row['x']+'" y="'+row['y']+'" time="'+row['time']+'" contract="'+row['contract']+'" id="'+row['id']+'" />'
     end
 
   end
