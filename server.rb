@@ -3,6 +3,7 @@ require 'pg'
 require 'xmlsimple'
 
 @conn = PGconn.new('localhost', 5432, '','', 'test', 'test', 'test');
+
 @fieldId = 0;
 def sendHeaders(ses)
   policyInfo = '&lt;?xml version="1.0"?&gt;'
@@ -35,6 +36,14 @@ def loadField()
   return str
   #return '<root><action>load</action><field coins="'+res['coins']+'" population="'+res['population']+'" power="'+res['power']+'">'+'</field></root>';
 end
+def mineStart(objectid, contract)
+  @conn.exec_params( "SELECT * FROM gameobjects where id=$1 and contract=0", [objectid] ) do |result|
+    if result.count > 0
+      return '<root><action>mineStart</action><objectid>'+objectid+'</objectid><contract>'+contract+'</contract></root>'
+    end
+    puts result
+  end
+end
 
 server = TCPServer.new('localhost', 4444);
 fieldId = 0
@@ -46,12 +55,14 @@ while(session = server.accept)
         ref = XmlSimple.xml_in(msg, {'ForceArray' => false })
         resp = ''
 
+        puts ref['action']
+
         if ref['action']=='auth'
           @fieldId = ref['fieldId']
         elsif ref['action']=='load'
           resp = loadField()
-        else
-          puts ref['action']
+        elsif ref['action']=='mineStart'
+          resp = mineStart(ref['objectid'], ref['contract'])
         end
 
         if resp != ''
