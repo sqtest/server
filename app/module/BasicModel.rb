@@ -1,6 +1,4 @@
 module BasicModel
-  attr_accessor :db
-
   def findByPk(pk)
     res = Application.db.instance.exec('select * from '+db+' where id=$1 limit 1', [pk])
     res[0]
@@ -69,6 +67,7 @@ module BasicModel
         fieldNames.push(key)
         paramsNum.push("$#{i}")
         params.push(value)
+        i += 1
       end
       sql += "(#{fieldNames.join(', ')}) values (#{paramsNum.join(', ')})"
     end

@@ -1,4 +1,4 @@
-class Fields
+class FieldsModel
   include BasicModel
   def db
     'fields'

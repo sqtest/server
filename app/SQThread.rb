@@ -5,32 +5,29 @@ class SQThread
 
   def start
     Thread.new(@session) do |ses|
-      while(request = ses.gets)
+      while (request = ses.gets)
         parsedRequest = parseRequest(request)
-        if defined?(parsedRequest.action.to_class())
-          action = parsedRequest.action.to_class().new()
-          responce = action.run(parsedRequest)
+        if defined?(parsedRequest['action'].to_class())
+          action = parsedRequest['action'].to_class().new()
+          parsedRequest['params'][:sessionId] = ses.object_id
+          responce = {};
+          responce['action'] = parsedRequest['action'];
+          responce['params'] = action.run(parsedRequest['params'])
+
           sendResponse(responce)
         end
       end
     end
   end
 
-  def sendPolicyInfo()
-    policyInfo = '&lt;?xml version="1.0"?&gt;'
-    policyInfo += '&lt;cross-domain-policy&gt;'
-    policyInfo += '&lt;allow-access-from domain="*" to-ports="4444,80" /&gt;'
-    policyInfo += '&lt;/cross-domain-policy&gt;'
-    sendResponse(policyInfo)
-  end
-
   def parseRequest(request)
-     XmlSimple.xml_in(request, {'ForceArray' => false })
+    XmlSimple.xml_in(request, {'ForceArray' => false})
   rescue Exception => e
-     false
+    false
   end
 
-  def sendResponse(data)
-    @session.print data.to_s
+  def sendResponse(responce)
+    @session.print XmlSimple.xml_out(responce, 'AttrPrefix' => true, 'RootName'=>'root')
   end
+
 end
