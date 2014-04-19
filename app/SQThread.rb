@@ -14,12 +14,11 @@ class SQThread
 
           if action.isSessionExists
             responce['params'] = action.run(parsedRequest['params'])
-            sendResponse(responce)
           else
             responce['params'] = {"auth"=>false}
-            sendResponse(responce)
           end
-
+          
+          sendResponse(responce)
         end
       end
     end
