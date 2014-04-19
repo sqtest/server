@@ -9,15 +9,18 @@ class SQThread
         parsedRequest = parseRequest(request)
         if defined?(parsedRequest['action'].to_class())
           action = parsedRequest['action'].to_class().new(ses.object_id)
-          responce = {};
-          responce['action'] = parsedRequest['action'];
+          responce = {}
+          responce['action'] = parsedRequest['action']
 
-          if action.isSessionExists
+          unless @fieldid.nil? || responce['action']=='ActionAuth'
             responce['params'] = action.run(parsedRequest['params'])
+            if responce['action']=='ActionAuth'
+              @fieldid = action['params']['fieldid']
+            end
           else
             responce['params'] = {"auth"=>false}
           end
-          
+
           sendResponse(responce)
         end
       end
