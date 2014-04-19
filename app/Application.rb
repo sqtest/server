@@ -9,10 +9,10 @@ class Application
         require 'xmlsimple'
 
         classLoad('/class_reload')
+        classLoad('/module')
         classLoad('')
         classLoad('/model')
         classLoad('/controller')
-
       end
       @instance ||=self
     end
