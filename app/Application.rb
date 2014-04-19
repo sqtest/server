@@ -8,11 +8,12 @@ class Application
         require 'pg'
         require 'xmlsimple'
 
-        classLoad('/class_reload')
-        classLoad('/module')
+        classLoad('/reloaded_classes')
+        classLoad('/modules')
+        classLoad('/basic_classes')
         classLoad('')
-        classLoad('/model')
-        classLoad('/controller')
+        classLoad('/models')
+        classLoad('/actions')
       end
       @instance ||=self
     end

@@ -8,13 +8,18 @@ class SQThread
       while (request = ses.gets)
         parsedRequest = parseRequest(request)
         if defined?(parsedRequest['action'].to_class())
-          action = parsedRequest['action'].to_class().new()
-          parsedRequest['params'][:sessionId] = ses.object_id
+          action = parsedRequest['action'].to_class().new(ses.object_id)
           responce = {};
           responce['action'] = parsedRequest['action'];
-          responce['params'] = action.run(parsedRequest['params'])
 
-          sendResponse(responce)
+          if action.isSessionExists
+            responce['params'] = action.run(parsedRequest['params'])
+            sendResponse(responce)
+          else
+            responce['params'] = {"auth"=>false}
+            sendResponse(responce)
+          end
+
         end
       end
     end

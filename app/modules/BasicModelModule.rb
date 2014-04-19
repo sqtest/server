@@ -1,4 +1,4 @@
-module BasicModel
+module BasicModelModule
   def findByPk(pk)
     res = Application.db.instance.exec('select * from '+db+' where id=$1 limit 1', [pk])
     res[0]
