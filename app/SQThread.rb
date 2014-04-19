@@ -12,13 +12,19 @@ class SQThread
           responce = {}
           responce['action'] = parsedRequest['action']
 
-          unless @fieldid.nil? || responce['action']=='ActionAuth'
-            responce['params'] = action.run(parsedRequest['params'])
+
+          if ((!@fieldid.nil?) || (@fieldid.nil? && responce['action']=='ActionAuth'))
+            actionParams = if parsedRequest['params'].nil?
+                             {}
+                           else
+                             parsedRequest['params']
+                           end
+            responce['params'] = action.run(actionParams)
             if responce['action']=='ActionAuth'
-              @fieldid = action['params']['fieldid']
+              @fieldid = parsedRequest['params']['fieldid']
             end
           else
-            responce['params'] = {"auth"=>false}
+            responce['params'] = {"auth" => false}
           end
 
           sendResponse(responce)
@@ -34,7 +40,7 @@ class SQThread
   end
 
   def sendResponse(responce)
-    @session.print XmlSimple.xml_out(responce, 'AttrPrefix' => true, 'RootName'=>'root')
+    @session.print XmlSimple.xml_out(responce, 'AttrPrefix' => true, 'RootName' => 'root')
   end
 
 end
