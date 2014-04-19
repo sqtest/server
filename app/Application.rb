@@ -4,9 +4,12 @@ class Application
     def config
       unless @instance
         yield(self)
+        require_relative '../app/class_reload/String'
         require 'socket'
         require 'pg'
         require 'xmlsimple'
+        require_relative '../app/SQServer'
+        require_relative '../app/SQThread'
       end
       @instance ||=self
     end
