@@ -4,14 +4,21 @@ class Application
     def config
       unless @instance
         yield(self)
-        require_relative '../app/class_reload/String'
         require 'socket'
         require 'pg'
         require 'xmlsimple'
-        require_relative '../app/SQServer'
-        require_relative '../app/SQThread'
+
+        classLoad('/class_reload')
+        classLoad('')
+        classLoad('/model')
+        classLoad('/controller')
+
       end
       @instance ||=self
+    end
+
+    def classLoad(dir='')
+      Dir[File.dirname(__FILE__) + dir +'/*.rb'].each {|file| require_relative file }
     end
 
     def db(&block)
