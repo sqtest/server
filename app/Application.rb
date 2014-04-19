@@ -15,21 +15,44 @@ class Application
       @db ||= Db.new(&block)
     end
 
+    def server(&block)
+      @server ||= Server.new(&block)
+    end
+
+
     class Db
       class << self
         def new
-          unless @instance
+          unless @inst
             yield(self)
           end
-          @instance ||=self
+          @inst ||=self
         end
 
-        def inst
-          @inst ||=PGconn.new(@host, @port, '','', @dbname, @username, @password);
+        def instance
+          @instance ||=PGconn.new(@host, @port, '','', @dbname, @username, @password);
         end
 
         attr_accessor :host, :port, :username, :password, :dbname
       end
     end
+
+    class Server
+      class << self
+        def new
+          unless @inst
+            yield(self)
+          end
+          @inst ||=self
+        end
+
+        def instance
+          @instance ||= TCPServer.new(@hist, @port)
+        end
+
+        attr_accessor :host, :port
+      end
+    end
+
   end
 end

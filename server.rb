@@ -8,4 +8,9 @@ Application.config do |app|
     db.password = 'test'
     db.dbname = 'test'
   end
+
+  app.server do |server|
+    server.host = '127.0.0.1'
+    server.port = 4444
+  end
 end
