@@ -8,10 +8,9 @@ class SQThread
       while (request = ses.gets)
         parsedRequest = parseRequest(request)
         if defined?(parsedRequest['action'].to_class())
-          action = parsedRequest['action'].to_class().new(ses.object_id)
+          action = parsedRequest['action'].to_class().new(ses.object_id, @fieldid)
           responce = {}
           responce['action'] = parsedRequest['action']
-
 
           if ((!@fieldid.nil?) || (@fieldid.nil? && responce['action']=='ActionAuth'))
             actionParams = if parsedRequest['params'].nil?
@@ -20,7 +19,7 @@ class SQThread
                              parsedRequest['params']
                            end
             responce['params'] = action.run(actionParams)
-            if responce['action']=='ActionAuth'
+            if responce['action']=='ActionAuth' && responce['params']['result']==true
               @fieldid = parsedRequest['params']['fieldid']
             end
           else
