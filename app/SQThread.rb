@@ -6,6 +6,7 @@ class SQThread
   def start
     Thread.new(@session) do |ses|
       while (request = ses.gets)
+        puts request
         parsedRequest = parseRequest(request)
         if defined?(parsedRequest['action'].to_class())
           action = parsedRequest['action'].to_class().new(ses.object_id, @fieldid)
@@ -28,6 +29,12 @@ class SQThread
 
           sendResponse(responce)
         end
+        parsedRequest = nil
+        responce = nil
+        parsedRequest = nil
+        actionParams = nil
+        action = nil
+        request = nil
       end
     end
   end

@@ -34,12 +34,20 @@ module BasicModelModule
   end
 
   def update(fields, criteria={})
-    fp = findQueryFormat(fields)
-    qp = findQueryFormat(criteria, fp.size)
+    fp = findQueryFormat(fields, 1, ', ')
+    qp = findQueryFormat(criteria, fp[1].size+1)
     sql = "update #{db} set #{fp[0]} where #{qp[0]}"
     Application.db.instance.exec(sql, fp[1]+qp[1])
     true
-  rescue
+  rescue Exception => e
+    puts e
+    false
+  end
+
+  def query(sql, params =[])
+    Application.db.instance.exec(sql, params)
+  rescue Exception => e
+    puts e
     false
   end
 
@@ -78,7 +86,7 @@ module BasicModelModule
   end
 
   private
-  def findQueryFormat(conditions, paramsStartPosition=1)
+  def findQueryFormat(conditions, paramsStartPosition=1, joinString=" AND ")
     params = []
     keys = []
     if (conditions.size>0)
@@ -89,6 +97,6 @@ module BasicModelModule
       end
     end
 
-    return [keys.join(' and '), params]
+    return [keys.join(joinString), params]
   end
 end

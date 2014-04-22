@@ -7,6 +7,7 @@ class Application
         require 'socket'
         require 'pg'
         require 'xmlsimple'
+        require 'webrick'
 
         classLoad('/reloaded_classes')
         classLoad('/modules')
@@ -30,6 +31,9 @@ class Application
       @server ||= Server.new(&block)
     end
 
+    def webserver(&block)
+      @webserver ||= WebServer.new(&block)
+    end
 
     class Db
       class << self
@@ -62,6 +66,23 @@ class Application
         end
 
         attr_accessor :host, :port
+      end
+    end
+
+    class WebServer
+      class << self
+        def new
+          unless @inst
+            yield(self)
+          end
+          @inst ||=self
+        end
+
+        def instance
+          @instance ||= WEBrick::HTTPServer.new :Port => @port, :DocumentRoot => @root
+        end
+
+        attr_accessor :root, :port
       end
     end
 
